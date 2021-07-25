@@ -25,11 +25,12 @@ db.init_app(app)
 
 
 
-TOPIC_NAME = 'locations'
+LOCATION_TOPIC = 'locations'
+PERSON_TOPIC = 'persons'
 KAFKA_SERVER = 'kafka:9092'
 logger.warning('Creating KafkaConsumer')
-consumer = KafkaConsumer(TOPIC_NAME,bootstrap_servers=[KAFKA_SERVER])
-logger.warning('Created KafkaConsumer')
+location_consumer = KafkaConsumer(LOCATION_TOPIC,bootstrap_servers=[KAFKA_SERVER])
+logger.warning('Created KafkaConsumers for location ')
 
 class Person(db.Model):
     __tablename__ = "person"
@@ -76,7 +77,7 @@ class Location(db.Model):
         return coord_text[coord_text.find("(") + 1 : coord_text.find(" ")]
 
 
-for message in consumer:
+for message in location_consumer:
     logger.warning (message)
     logger.warning (json.loads (message.value.decode('utf-8')))
     location = json.loads (message.value.decode('utf-8'))
@@ -94,6 +95,5 @@ for message in consumer:
         logger.warning(locations.count)
         for loc in locations:   
             logger.warning(loc)
-
 
 
